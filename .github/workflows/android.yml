@@ -1,38 +1,37 @@
 name: Android APK Build
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout proiect
       - uses: actions/checkout@v3
 
-      # 2. Instalare JDK 17 (necesar pentru Gradle)
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. Permisiune de execuție pentru gradlew
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      # 4. FIX pentru eroarea ta: [: true: unexpected operator
       - name: Fix gradlew line endings
         run: sed -i 's/\r$//' gradlew
 
-      # 5. Build APK (debug)
+      - name: Force JAVA visibility
+        run: |
+          echo "JAVA_HOME = $JAVA_HOME"
+          echo "PATH = $PATH"
+          export PATH=$JAVA_HOME/bin:$PATH
+        shell: bash
+
       - name: Build APK
         shell: bash
         run: ./gradlew assembleDebug --stacktrace
 
-      # 6. Salvare APK ca artifact -> vei putea face DOWNLOAD
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
