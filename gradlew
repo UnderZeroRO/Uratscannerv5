@@ -84,7 +84,7 @@ case "$( uname )" in
 esac
 
 # For Cygwin or MSYS, switch paths to Windows format before running java
-if [ "$cygwin" = "true" ] -o [ "$msys" = "true" ] ; then
+if [ "$cygwin" = "true" ] || [ "$msys" = "true" ] ; then
     APP_HOME=$(cygpath --path --mixed "$APP_HOME")
     APP_BASE_NAME=$(cygpath --path --mixed "$APP_BASE_NAME")
 fi
