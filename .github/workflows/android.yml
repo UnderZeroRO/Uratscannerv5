@@ -9,23 +9,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout project
       - uses: actions/checkout@v3
 
-      # Setup JDK 17
+      # Setup Java 17
       - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # Make gradlew executable and fix line endings
-      - name: Prepare gradlew
+      # Prepare gradlew
+      - name: Make gradlew executable
         run: |
           chmod +x gradlew
           sed -i 's/\r$//' gradlew
 
-      # Run Gradle build with explicit bash + Java PATH
+      # Run Gradle with explicit java command
       - name: Build APK
         shell: bash
         run: |
@@ -33,9 +32,10 @@ jobs:
           export PATH=$JAVA_HOME/bin:$PATH
           echo "Using Java at: $(which java)"
           java -version
-          ./gradlew assembleDebug --stacktrace
+          # Force Gradle to use the correct java explicitly
+          $JAVA_HOME/bin/java -jar gradle/wrapper/gradle-wrapper.jar assembleDebug
 
-      # Upload APK artifact
+      # Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
